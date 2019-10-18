@@ -1,0 +1,12 @@
+use slex.*
+
+def main(): i32
+    i32 a = input<i32>("Number a: ")
+    i32 b = input<i32>("Number b: ")
+    
+    print("Result ")
+    print(a)
+    print(" + ")
+    print(b)
+    print(" = ")
+    print(a + b)

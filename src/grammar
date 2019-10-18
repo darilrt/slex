@@ -1,0 +1,74 @@
+# class
+class_define: 'class' 'name'=IDENT\
+    'template'=[('<' 'name'=IDENT 'list'=*(',' 'name'=IDENT) '>')]\
+    'inher'=[(\
+        '(' 'class'=vdottname\
+        'template'=[('<' 'name'=vtype 'list'=*(',' 'name'=vtype) '>')]\
+        'list'=*(',' 'class'=vdottname\
+            'template'=[('<' 'name'=vtype 'list'=*(',' 'name'=vtype) '>')]\
+        ) ')'\
+    )] ':' EOL
+
+# functions
+func_define: 'def' 'name'=[IDENT expr_op]\
+    'template'=[('<' 'name'=IDENT 'list'=*(',' 'name'=IDENT) '>')]\
+    '(' 'args'=[typedlist] ')' ':' 'type'=[vtype] EOL
+
+func_call: 'name'=dotted_name\
+    'template'=[('<' 'type'=vtype 'list'=*(',' 'type'=vtype) '>')]\
+    '(' 'args'=[exprlist] ')'
+
+# variables
+var_define: 'type'=vtype 'name'=IDENT 'array'=*('[' 'expr'=[EXPR] ']')\
+    'assign'=[('=' 'expr'=[EXPR])] \
+    'list'=*(',' 'name'=IDENT 'array'=*('[' 'expr'=[EXPR] ']')\
+    'assign'=[('=' 'expr'=[EXPR])]) EOL
+
+var_assign: 'name'=dotted_name 'nlist'=*[(',' 'name'=dotted_name)]\
+	'=' 'expr'=[EXPR] 'elist'=*[(',' 'expr'=[EXPR])]
+
+# control flow
+if_stmt: 'if' 'expr'=EXPR ':' EOL
+elif_stmt: 'elif' 'expr'=EXPR ':' EOL
+else_stmt: 'else' ':' EOL
+switch_stmt: 'switch' 'expr'=EXPR ':' EOL
+case_stmt: 'case' 'expr'=EXPR ':' EOL
+default_stmt: 'default' ':' EOL
+while_stmt: 'while' 'expr'=EXPR ':' EOL
+for_stmt: 'for' 'var'=IDENT 'in' 'expr'=EXPR ':' EOL
+for_range_stmt: 'for' 'var'=IDENT 'in' 'expr_s'=EXPR 'to' 'expr_e' ':' EOL
+
+# stataments
+return_stmt: 'return' 'expr'=[EXPR]
+cpp_stmt: 'cpp' 'line'=STRING
+hpp_stmt: 'hpp' 'line'=STRING
+del_stmt: 'del' 'name'=[dotted_name]
+use_stmt: 'use' 'name'=vdottname 'as'=[('as' 'name'=[IDENT '*'])] 'all'=[('.' '*')]
+package_stmt: 'package' 'name'=vdottname
+
+# directive or decorative?
+deco: '@' 'cmd'=IDENT EOL
+
+# common
+typedlist: 'var'=typeddef 'list'=*(',' 'var'=typeddef)
+typeddef: 'type'=vtype 'name'=IDENT 'array'=*('[' 'expr'=[EXPR] ']')
+exprlist: 'expr'=EXPR 'list'=*(',' 'expr'=EXPR)
+vdottedlist: 'name'=vdottname 'list'=*(',' 'name'=vdottname)
+
+vtype: 'ref'=['ref'] 'name'=vdottname \
+    'template'=[('<' 'name'=vtype 'list'=*(',' 'name'=vtype) '>')] \
+    'ptr'=*('p'='*') 
+
+vdottname: 'name'=IDENT 'list'=*('.' 'name'=IDENT)
+
+dotted_name: 'name'=IDENT 'array'=*('[' 'expr'=[EXPR] ']') \
+            'list'=*('.' 'name'=IDENT 'array'=*('[' 'expr'=[EXPR] ']'))
+
+# expressions
+expr: 'expr'=EXPR EOL
+literal_str: 'val'=STRING
+literal_num: 'val'=NUMBER 'ext'=['f' ('.' NUMBER)]
+expr_val: 'val'=[func_call dotted_name literal_str literal_num]
+expr_new: 'new' 'val'=[func_call vdottname]
+expr_op: 'op'=[ '+' '-' '++' '--' '.' '*' '**' '/' '%' '&' '|' '<' '<<' \
+                '<=' '>' '>>' '>=' '==' 'not' 'in' 'is' 'and' 'or' ]

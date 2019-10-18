@@ -1,0 +1,31 @@
+hpp "#include <iostream>"
+
+package slex
+hpp "typedef std::string cstr;"
+
+@header
+class str:
+    i8* c_str
+    
+    def size(): i32
+
+def print<T>(T c):
+    cpp "std::cout << l_c;"
+
+def println<T>(T c):
+    cpp "std::cout << l_c << std::endl;"
+
+def input<T>(): T
+    str a
+    T out
+    cpp "std::cin >> l_out;"
+    return out
+
+def input<T, B>(B m): T
+    cpp "std::cout << l_m;"
+    T out
+    cpp "std::cin >> l_out;"
+    return out
+
+def cast<T, B>(B i): T
+    cpp "return (T) l_i;"

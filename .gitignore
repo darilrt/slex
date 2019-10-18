@@ -63,6 +63,7 @@ instance/
 # Scrapy stuff:
 .scrapy
 
+# for Python
 # Sphinx documentation
 docs/_build/
 
@@ -102,3 +103,41 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# for Slex
+# Compiled Slex files
+*.cpp
+*.hpp
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
