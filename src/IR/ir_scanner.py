@@ -6,6 +6,7 @@ class Scanner:
     def __init__(self, grm, file_path):
         self.file_path = file_path
         
+        self.compiled_files = []
         self.lines = []
         self.pos = -1
         
@@ -20,6 +21,7 @@ class Scanner:
         self.packages = []
         self.self_package = None
         self.as_header = False
+        self.libs = []
 
         self.identation = ""
 
@@ -281,16 +283,45 @@ class Scanner:
         
         r = self.find_type_in(self.node, vtype)
         if r[0]: return r[1], r[2], vtype
+        else:
+            r = self.node.find(IR.Package, vtype['name']['name'])
+            if r:
+                i = 0
+                vtt = vtype.copy()
+                vtt['name']['name'] = vtt['name']['list'].pop(0)['name']
+                r = self.find_type_in(r, vtt)
+                
+                return "", r, vtype
         
         for i in xrange(1, len(self._stack_current) + 1):
             p = self._stack_current[len(self._stack_current)-i]
             
             r = self.find_type_in(p, vtype)
-            if r[0]: return r[1], r[2], vtype
+            
+            if r[0]:
+                name = r[1]
+                
+                p = r[2]
+                while p.up:
+                    if p.up.__class__ == IR.Package and p.up.name != "":
+                        name = "p_" + p.up.name + "::" + name
+                    p = p.up
+                
+                return name, r[2], vtype
         
         for p in self.packages:
             r = self.find_type_in(p, vtype)
-            if r[0]: return r[1], r[2], vtype
+            
+            if r[0]:
+                name = r[1]
+                
+                p = r[2]
+                while p.up:
+                    if p.up.__class__ == IR.Package and p.up.name != "":
+                        name = "p_" + p.up.name + "::" + name
+                    p = p.up
+                
+                return name, r[2], vtype
         
         self.fatal("TypeError", "")
     
@@ -477,6 +508,7 @@ class Scanner:
                 node.irs = self
                 if node.__class__ != IR.Null:
                     parent.push(node)
+                    node.up = parent
 
             node = self._next(cident)
 

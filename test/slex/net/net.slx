@@ -1,0 +1,8 @@
+package slex.net
+use slex.*
+
+class Socket:
+    slex.String type
+    
+    def Socket(String type):
+        self.type = type

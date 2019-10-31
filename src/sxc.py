@@ -58,13 +58,15 @@ class Sxc:
             tmp = data['name'].copy()
             lst = [tmp] + tmp.pop('list')
             
+            irs.compiled_files.append("/".join(x['name'] for x in lst))
+            
             folder = ""
             for n in lst:
                 folder += "/" + n['name']
                 
                 if not os.path.isdir(self.odir + folder + "/"):
                     os.mkdir(self.odir + folder + "/")
-                
+            
             folder += "/"
             
             list_files = os.listdir(self.dir + folder)
@@ -75,22 +77,34 @@ class Sxc:
                     slx_files.append(f)
             
             for slxf in slx_files:
+                file_path = self.dir + folder + slxf
+                
                 sxc = Sxc(
                     self.grm_path,
-                    self.dir + folder + slxf,
+                    file_path,
                     self.dir,
-                    self.odir + folder
+                    self.odir
                 )
                 
                 sxc.generate_ir()
+                irs.node.hincludes += sxc.irs.node.hincludes
+                irs.node.cincludes += sxc.irs.node.cincludes
+                irs.node.cincludes.remove("%s%s.hpp" %sxc.irs.node.name)
                 
                 n = "".join(sxc.irs.node.name)
-                self.files.append([self.odir + folder, sxc])
-                irs.node.hincludes.append(folder[1:] + n + ".hpp")
                 
                 pkg = sxc.irs.node
                 for n in lst:
                     pkg = pkg.find(IR.Package, n['name'])
+                
+                pack = sxc.irs.node.find(IR.Package, lst[0]['name'])
+                t = irs.node.find(IR.Package, pack.name)
+                if t:
+                    print t.up.name, pack.up.name
+                    t.childs = pack.childs + t.childs
+                    
+                else:
+                    irs.node.childs = [pack] + irs.node.childs
                 
                 pkg = copy.copy(pkg)
                 pkg.hide = True
@@ -100,9 +114,6 @@ class Sxc:
                 
                 elif data['as']:
                     print data['as']
-                
-                else:
-                    irs.node.push(pkg)
             
             return IR.Null()
         
@@ -141,6 +152,19 @@ class Sxc:
             irs.set(last)
             irs.childs_by_ident(last, ident)
             irs.unset()
+            
+            return IR.Null()
+        
+        @self.irs.add("link_stmt")
+        def func(irs, data, ident):
+            if data['line'] not in irs.libs:
+                irs.libs.append(data['line'])
+            return IR.Null()
+        
+        @self.irs.add("include_stmt")
+        def func(irs, data, ident):
+            if data['line'] not in irs.node.hincludes:
+                irs.node.hincludes.append(data['line'])
             
             return IR.Null()
         
@@ -462,25 +486,24 @@ def main():
     sxc = Sxc(grm_file_path, path, os.path.dirname(path), out_dir)
     sxc.generate_ir()
     
-    for f in sxc.files:
-        dir, s = f
-        n = "".join(s.irs.node.name)
-        
-        cfile = file("%s/%s.cpp" %(dir, n), 'w+')
-        cfile.write(s.source())
-        cfile.close()
-        
-        hfile = file("%s/%s.hpp" %(dir, n), 'w+')
-        hfile.write(s.header())
-        hfile.close()
+    files = []
+    libs = ["-lstdc++"]
     
+    files.append("%s/%s.cpp" %(out_dir, name))
+
     cfile = file("%s/%s.cpp" %(out_dir, name), 'w+')
-    cfile.write(sxc.source())
+    cfile.write(sxc.irs.node.source())
     cfile.close()
-    
+
     hfile = file("%s/%s.hpp" %(out_dir, name), 'w+')
-    hfile.write(sxc.header())
+    hfile.write(sxc.irs.node.header())
     hfile.close()
+    
+    os.system("gcc " + " ".join(files) + " -o %s\%s.exe %s" %(
+        out_dir,
+        sxc.irs.node.name[0],
+        " ".join(libs)
+    ))
     
 if __name__ == "__main__":
     main()

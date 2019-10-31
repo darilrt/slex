@@ -31,13 +31,13 @@ class Class(Node):
         
         elif child.__class__ == IR.Variable:
             child.parent = self
-            
             child.cname = 'p_%s' %child.name
             
             if self.head:
                 child.cname = child.name
         
         self.childs.append(child)
+        child.up = self
     
     def source(self, tab=""):
         if self.hide:

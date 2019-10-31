@@ -1,10 +1,11 @@
-hpp "#include <iostream>"
-
 package slex
-hpp "typedef std::string cstr;"
+include "iostream"
+link "stdc++"
+
+hpp "typedef std::string cString;"
 
 @header
-class str:
+class String:
     i8* c_str
     
     def size(): i32
@@ -16,7 +17,7 @@ def println<T>(T c):
     cpp "std::cout << l_c << std::endl;"
 
 def input<T>(): T
-    str a
+    String a
     T out
     cpp "std::cin >> l_out;"
     return out

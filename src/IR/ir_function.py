@@ -19,6 +19,7 @@ class Function(Node):
             node.cname = "l_%s" %node.name
         
         self.childs.append(node)
+        node.up = self
     
     def get_arg(self, e):
         e.hide = False

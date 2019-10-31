@@ -6,6 +6,7 @@ class Node:
         self._type 	= type
         self.irs 	= None
         self.name	= name
+        self.up     = None
         self.childs = []
         self.all_props = False
         self._stack_context = []
@@ -52,6 +53,7 @@ class Node:
     
     def push(self, node):
         self.childs.append(node)
+        node.up = self
         return self
 
     def childs_source(self, tab=""):
@@ -88,7 +90,7 @@ class File(Node):
         return "".join([
             "#ifndef SLX_H_%s\n" %name,
             "#define SLX_H_%s\n" %name,
-            "%s" %incs,
+            "%s\n" %incs,
             "%s\n" %self.childs_header(tab),
             "#endif // SLX_H_%s\n" %name
         ])
@@ -109,7 +111,7 @@ class Package(Node):
         if self.name == "":
             return self.childs_source(tab)
         
-        return "%snamespace %s {\n%s\n%s}" %(
+        return "%snamespace %s {\n%s\n%s}\n" %(
             tab, self.cname, self.childs_source(tab + "\t"), tab)
     
     def header(self, tab=""):
@@ -121,7 +123,7 @@ class Package(Node):
         if self.name == "":
             return self.childs_header(tab)
         
-        return "%snamespace %s {\n%s\n%s}" %(
+        return "%snamespace %s {\n%s\n%s}\n" %(
             tab, self.cname, self.childs_header(tab + "\t"), tab)
 
 class Hpp(Node):

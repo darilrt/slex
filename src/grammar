@@ -42,6 +42,8 @@ for_range_stmt: 'for' 'var'=IDENT 'in' 'expr_s'=EXPR 'to' 'expr_e' ':' EOL
 return_stmt: 'return' 'expr'=[EXPR]
 cpp_stmt: 'cpp' 'line'=STRING
 hpp_stmt: 'hpp' 'line'=STRING
+link_stmt: 'link' 'line'=STRING
+include_stmt: 'include' 'line'=STRING
 del_stmt: 'del' 'name'=[dotted_name]
 use_stmt: 'use' 'name'=vdottname 'as'=[('as' 'name'=[IDENT '*'])] 'all'=[('.' '*')]
 package_stmt: 'package' 'name'=vdottname

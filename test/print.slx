@@ -1,12 +1,16 @@
+use slex.net
 use slex.*
 
-def main(): i32
-    i32 a = input<i32>("Number a: ")
-    i32 b = input<i32>("Number b: ")
+class Chat:
+    slex.String name
     
-    print("Result ")
-    print(a)
-    print(" + ")
-    print(b)
-    print(" = ")
-    print(a + b)
+    def run():
+        self.name = input<String>("Name: ")
+        print("Hello, ")
+        print(self.name)
+        println("!")
+        
+
+def main(): i32
+    Chat chat
+    chat.run()
