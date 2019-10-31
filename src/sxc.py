@@ -63,9 +63,6 @@ class Sxc:
             folder = ""
             for n in lst:
                 folder += "/" + n['name']
-                
-                if not os.path.isdir(self.odir + folder + "/"):
-                    os.mkdir(self.odir + folder + "/")
             
             folder += "/"
             
@@ -91,6 +88,10 @@ class Sxc:
                 irs.node.cincludes += sxc.irs.node.cincludes
                 irs.node.cincludes.remove("%s%s.hpp" %sxc.irs.node.name)
                 
+                print irs.node.hincludes
+                irs.node.hincludes = list(dict.fromkeys(irs.node.hincludes))
+                print irs.node.hincludes
+                
                 n = "".join(sxc.irs.node.name)
                 
                 pkg = sxc.irs.node
@@ -100,8 +101,8 @@ class Sxc:
                 pack = sxc.irs.node.find(IR.Package, lst[0]['name'])
                 t = irs.node.find(IR.Package, pack.name)
                 if t:
-                    print t.up.name, pack.up.name
                     t.childs = pack.childs + t.childs
+                    
                     
                 else:
                     irs.node.childs = [pack] + irs.node.childs
