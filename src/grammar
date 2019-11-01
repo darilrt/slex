@@ -73,4 +73,4 @@ literal_num: 'val'=NUMBER 'ext'=['f' ('.' NUMBER)]
 expr_val: 'val'=[func_call dotted_name literal_str literal_num]
 expr_new: 'new' 'val'=[func_call vdottname]
 expr_op: 'op'=[ '+' '-' '++' '--' '.' '*' '**' '/' '%' '&' '|' '<' '<<' \
-                '<=' '>' '>>' '>=' '==' 'not' 'in' 'is' 'and' 'or' ]
+                '<=' '>' '>>' '>=' '==' '!=' 'not' 'in' 'is' 'and' 'or' ]

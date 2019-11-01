@@ -3,9 +3,10 @@ import IR
 import os
 
 class Scanner:
-    def __init__(self, grm, file_path):
+    def __init__(self, grm, file_path, first=False):
         self.file_path = file_path
         
+        self.first = first
         self.compiled_files = []
         self.lines = []
         self.pos = -1
@@ -52,6 +53,7 @@ class Scanner:
         self._push_primitive('f64' , 'float')
         self._push_primitive('f64' , 'double')
         
+        self._push_var('null'  , 'nullptr')
         self._push_var('true'  , 'true')
         self._push_var('false' , 'false')
         self._push_var('and'  , '&&')
@@ -161,7 +163,7 @@ class Scanner:
 
         ident = self._ident_level(line)
         
-        if ident < cident:
+        if ident != cident:
             return -1
 
         error = True
@@ -348,7 +350,6 @@ class Scanner:
         
         if vtype['template']:
             tmp = vtype['template']
-            print vtype['template']
             lst = [{'name': tmp['name']}] + tmp['list']
             lst = ", ".join([self.get_type(x['name'])[0] for x in lst])
             fmt = "<%s>" %(lst) + fmt

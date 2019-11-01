@@ -23,6 +23,9 @@ class Class(Node):
             if self.head:
                 child.cname = child.name
             
+            if len(self.template) > 0:
+                child.template = [None]
+                
             # check if contructor
             if child.name == self.name:
                 child.cname = 'c%s' %self.name
@@ -81,11 +84,13 @@ class Class(Node):
             
         src = ""
         for child in self.childs:
-            if child.__class__ == IR.Variable:
-                src += child.source(tab + "\t")
+            # if child.__class__ == IR.Variable:
+                # src += child.source(tab + "\t")
             
-            elif child.__class__ == IR.Function:
-                src += child.header(tab + "\t")
+            # elif child.__class__ == IR.Function:
+                # src += child.header(tab + "\t")
+            
+            src += child.header(tab + "\t")
         
         return "\n%s%sclass %s%s {\n%spublic:\n%s%s};\n" %(
             tmp, tab, self.cname, inh, tab, src, tab

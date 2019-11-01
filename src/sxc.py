@@ -6,14 +6,15 @@ import IR
 import os
 
 class Sxc:
-    def __init__(self, grm_path, file_path, dir, out):
+    def __init__(self, grm_path, file_path, dir, out, first=False):
         self.grm = sxg.Grammar()
         self.grm_path = grm_path
         self.load_grammar_defs(grm_path)
         self.dir = dir
         self.odir = out
-
-        self.irs = IR.Scanner(self.grm, file_path)
+        
+        self.irs = IR.Scanner(self.grm, file_path, first=first)
+        self.first = first
         self.add_defs()
         self.next_as = ''
         self.files = []
@@ -87,25 +88,29 @@ class Sxc:
                 irs.node.hincludes += sxc.irs.node.hincludes
                 irs.node.cincludes += sxc.irs.node.cincludes
                 irs.node.cincludes.remove("%s%s.hpp" %sxc.irs.node.name)
-                
-                print irs.node.hincludes
                 irs.node.hincludes = list(dict.fromkeys(irs.node.hincludes))
-                print irs.node.hincludes
                 
                 n = "".join(sxc.irs.node.name)
                 
+                nod = irs.node
                 pkg = sxc.irs.node
                 for n in lst:
                     pkg = pkg.find(IR.Package, n['name'])
+                    t = nod.find(IR.Package, n['name'])
+                    
+                    if not t:
+                        _node = IR.Package()
+                        _node.name = pkg.name
+                        _node.cname = pkg.cname
+                        _node.up = nod
+                        
+                        nod.childs = [_node] + nod.childs
+                        nod = _node
+                    
+                    else:
+                        nod = t
                 
-                pack = sxc.irs.node.find(IR.Package, lst[0]['name'])
-                t = irs.node.find(IR.Package, pack.name)
-                if t:
-                    t.childs = pack.childs + t.childs
-                    
-                    
-                else:
-                    irs.node.childs = [pack] + irs.node.childs
+                nod.childs = pkg.childs + nod.childs
                 
                 pkg = copy.copy(pkg)
                 pkg.hide = True
@@ -265,7 +270,9 @@ class Sxc:
             node.condition = data['expr']
             node.ccondition = irs.get_expr(data['expr'])
             
+            irs.set(node)
             irs.childs_by_ident(node, ident)
+            irs.unset()
             
             return node
         
@@ -295,6 +302,7 @@ class Sxc:
             node.irs = irs
             node.name = data['name']
             node.cname = "c" + data['name']
+            irs.current.push(node)
             
             if self.next_as == 'header':
                 node.head = True
@@ -319,7 +327,7 @@ class Sxc:
             irs.set(node)
             irs.childs_by_ident(node, ident)
             irs.unset()
-            return node
+            return IR.Null()
             
         @self.irs.add("func_define")
         def func(irs, data, ident):
@@ -484,7 +492,7 @@ def main():
     if out_dir == "":
         out_dir = os.path.dirname(path)
     
-    sxc = Sxc(grm_file_path, path, os.path.dirname(path), out_dir)
+    sxc = Sxc(grm_file_path, path, os.path.dirname(path), out_dir, first=True)
     sxc.generate_ir()
     
     files = []

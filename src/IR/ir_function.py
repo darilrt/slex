@@ -65,11 +65,14 @@ class Function(Node):
         if self.cname == "": self.cname = "f_" + self.name
         
         if len(self.template) > 0:
+            tmp = ""
             args = ", ".join([self.get_arg(e) for e in self.args])
             
-            tmp = ", ".join(["typename %s" %e['name'] for e in self.template])
-            tmp = "%stemplate<%s>\n" %(tab, tmp)
-            
+            if self.template[0] != None:
+                
+                tmp = ", ".join(["typename %s" %e['name'] for e in self.template])
+                tmp = "%stemplate<%s>\n" %(tab, tmp)
+                
             return "\n%s%s%s %s(%s) {\n%s%s}\n" %(
                 tmp, tab, self.type[0], self.cname, args,
                 self.childs_source(tab + "\t"), tab

@@ -1,6 +1,22 @@
 package slex
+include "vector"
 include "iostream"
+include "string"
 link "stdc++"
+
+# DATA TYPES
+
+class Vector<T>:
+    hpp "std::vector<T> _vector;"
+    
+    def push(T element):
+        cpp "this->_vector.push_back(l_element);"
+    
+    def len(): i32
+        cpp "return this->_vector.size();"
+    
+    def at(i32 index): T
+        cpp "return this->_vector.at(l_index);"
 
 hpp "typedef std::string cString;"
 
@@ -9,6 +25,11 @@ class String:
     i8* c_str
     
     def size(): i32
+
+# FUNCTIONS
+
+def str<T>(T e): String
+    cpp "return std::to_string(l_e);"
 
 def print<T>(T c):
     cpp "std::cout << l_c;"
