@@ -243,29 +243,9 @@ class Scanner:
                 out.append(op.data)
             
             elif op.type == Operand.INSTANCING:
-                if op.data['__name__'] == "dotted_name":
-                    info = self.get_dotted(op.data)
-                    size = []
-                    
-                    if op.data['arr'] != None:
-                        for arr in op.data['arr']:
-                            if arr['def']['expr'] != None:
-                                size.append("(%s)" %self.get_expr(arr['def']['expr']['expr']))
-                            
-                            else:
-                                print "Invalid size"
-                            
-                    
-                    out.append("malloc(sizeof(%s) * %s)" %(info[0], " * ".join(size)))
-                    
-                elif op.data['__name__'] == 'func_call':
-                    info = self.get_dotted(op.data['name'])
-                    
-                    if info[1] != 'class':
-                        print "Can't instance \"%s\" (\"%s\")" %(info[1], info[0])
-                    
-                    else:
-                        out.append("new%s()" %(info[0]))
+                out.append("new {type}".format(
+                    type=self.get_vdotted(op.data['name'])
+                ))
                 
             else:
                 out += str(op)
@@ -339,7 +319,52 @@ class Scanner:
                 return 1, self._get_type_fmt(vtype) %t.cname, t, vtype
         
         return 0, None, None
-   
+        
+    def _vdott_find(self, node, name):
+        types = [IR.TypeDef, IR.Class, IR.Package]
+        
+        for typ in types:
+            t = node.find(typ, name)
+            if t: return t
+        
+        return None
+
+    def get_vdotted(self, vdotted):
+        v = vdotted.copy()
+        v.pop('__name__')
+        lst = [v] + v.pop('list')
+        lst.reverse()
+        
+        parent = None
+        for vn in lst:
+            if parent:
+                node = self._vdott_find(parent, vn['name'])
+                
+            else:
+                node = self._get_vdotted_find(vn['name'])
+                
+                if node.__class__ == IR.Package:
+                    parent = node
+                
+            print node
+            
+        print ""
+    
+    def _get_vdotted_find(self, name):
+        r = self._vdott_find(self.node, name)
+        if r: return r
+        
+        for i in xrange(1, len(self._stack_current) + 1):
+            p = self._stack_current[len(self._stack_current)-i]
+            r = self._vdott_find(p, name)
+            if r: return r
+        
+        for p in self.packages:
+            r = self._vdott_find(p, name)
+            if r: return r
+        
+        return None
+        
     def _get_type_fmt(self, vtype):
         fmt = ""
         if vtype['ref'] != None:

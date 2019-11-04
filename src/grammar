@@ -70,7 +70,11 @@ dotted_name: 'name'=IDENT 'array'=*('[' 'expr'=[EXPR] ']') \
 expr: 'expr'=EXPR EOL
 literal_str: 'val'=STRING
 literal_num: 'val'=NUMBER 'ext'=['f' ('.' NUMBER)]
-expr_val: 'val'=[func_call dotted_name literal_str literal_num]
-expr_new: 'new' 'val'=[func_call vdottname]
+expr_val: 'val'=[expr_new func_call dotted_name literal_str literal_num]
 expr_op: 'op'=[ '+' '-' '++' '--' '.' '*' '**' '/' '%' '&' '|' '<' '<<' \
                 '<=' '>' '>>' '>=' '==' '!=' 'not' 'in' 'is' 'and' 'or' ]
+
+expr_new: 'new' 'name'=vdottname \
+    'template'=[('<' 'type'=vtype 'list'=*(',' 'type'=vtype) '>')]\
+    'array'=*('[' 'expr'=[EXPR] ']') \
+    'args'=*('[' 'args'=[exprlist] ']')

@@ -2,30 +2,7 @@ use slex.*
 
 class Node:
 	i32 data
-	Node* next
-
-	def Node(i32 data):
-		self.data = data
-	
-	def push(i32 data):
-		Node* n = self
-		while n.next != null:
-			Node* n = n.next
-		
-		n.next = new Node(data)
-	
-	def length(i32 data): i32
-		i32 count = 0
-		Node* n = self
-		while n.next != null:
-			Node* n = n.next
-			count++
-		
-		return count
-	
-	def str(): i8*
-		return "Node("  ", " + self.next.str() + ")"
 
 def main(): i32
-
+    String* node = new std.String
     return 0
