@@ -305,7 +305,7 @@ class Scanner:
                 
                 return name, r[2], vtype
         
-        self.fatal("TypeError", "")
+        self.fatal("TypeError", "%s" %vtype['name']['name'])
     
     def find_type_in(self, node, vtype):
         types = [IR.TypeDef, IR.Class]
@@ -333,22 +333,51 @@ class Scanner:
         v = vdotted.copy()
         v.pop('__name__')
         lst = [v] + v.pop('list')
-        lst.reverse()
         
+        name = ""
         parent = None
-        for vn in lst:
+        for (i, vn) in enumerate(lst):
             if parent:
                 node = self._vdott_find(parent, vn['name'])
+                
+                if node:
+                    parent = node
+                    
+                    if node.__class__ == IR.Package:
+                        name += "p_" + node.name
+                        if i < len(lst) - 1: name += "::"
+                    
+                    elif node.__class__ == IR.Class:
+                        name += "c" + node.name
+                        if i < len(lst) - 1: name += "::"
+                    
+                    elif node.__class__ == IR.TypeDef:
+                        name += node.name
+                        if i < len(lst) - 1: name += "::"
+                    
+                else:
+                    self.fatal("NameError", "name \"%s\" is not defined" %vn['name'])
                 
             else:
                 node = self._get_vdotted_find(vn['name'])
                 
-                if node.__class__ == IR.Package:
+                if node and node.__class__ == IR.Package:
                     parent = node
+                    name += "p_" + node.name
+                    if i < len(lst) - 1: name += "::"
+                    
+                elif node.__class__ == IR.Class:
+                    name += "c" + node.name
+                    if i < len(lst) - 1: name += "::"
                 
-            print node
-            
-        print ""
+                elif node.__class__ == IR.TypeDef:
+                    name += node.name
+                    if i < len(lst) - 1: name += "::"
+                    
+                else:
+                    self.fatal("NameError", "name \"%s\" is not defined" %vn['name'])
+                
+        return name
     
     def _get_vdotted_find(self, name):
         r = self._vdott_find(self.node, name)

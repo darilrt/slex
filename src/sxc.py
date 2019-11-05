@@ -323,6 +323,7 @@ class Sxc:
                     n.cname = tmp['name']
                     n.all_props = True
                     node.push(n)
+                    n.up = None
             
             irs.set(node)
             irs.childs_by_ident(node, ident)
