@@ -84,8 +84,8 @@ class Class(Node):
             
         src = ""
         for child in self.childs:
-            # if child.__class__ == IR.Variable:
-                # src += child.source(tab + "\t")
+            if child.__class__ == IR.Variable:
+                src += child.source(tab + "\t")
             
             # elif child.__class__ == IR.Function:
                 # src += child.header(tab + "\t")

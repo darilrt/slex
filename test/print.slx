@@ -1,31 +1,15 @@
 use slex.*
 
-class Node:
-	i32 data
-	Node* next
-
-	def Node(i32 data):
-		self.data = data
-	
-	def push(i32 data):
-		Node* n = self
-		while n.next != null:
-			Node* n = n.next
-		
-		n.next = new Node(data)
-	
-	def length(i32 data): i32
-		i32 count = 0
-		Node* n = self
-		while n.next != null:
-			Node* n = n.next
-			count++
-		
-		return count
-	
-	def str(): i8*
-		return "Node("  ", " + self.next.str() + ")"
+class Node<T>:
+    T data
+    
+    def Node(T a, T b):
+        self.data = a + b
 
 def main(): i32
-
+    Node<i32>* node = new Node<i32>(1, 2)
+    
+    print(node.data)
+    
+    del node
     return 0
