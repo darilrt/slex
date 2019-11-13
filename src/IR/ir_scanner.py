@@ -243,8 +243,48 @@ class Scanner:
                 out.append(op.data)
             
             elif op.type == Operand.INSTANCING:
-                out.append("new {type}".format(
-                    type=self.get_vdotted(op.data['name'])
+                templ = ""
+                
+                if op.data['template']:
+                    templ = "<%s>"
+                    tmp = op.data['template'].copy()
+                    lst = [tmp.pop("type")] + tmp.pop("list")
+                    
+                    names = []
+                    for tpe in lst:
+                        names.append(self.get_type(tpe)[0])
+                    
+                    templ = templ %(",".join(names))
+                
+                arr = ""
+                if op.data['array']:
+                    arr = "[%s]"
+                    lst = op.data['array']
+                    
+                    srcs = []
+                    for expr in lst:
+                        srcs.append(self.get_expr(expr['expr']))
+                    
+                    arr = arr %(",".join(srcs))
+                
+                args = ""
+                if op.data['args']:
+                    args = "(%s)"
+                    
+                    arg = op.data['args']['args'].copy()
+                    lst = [arg] + arg.pop('list')
+                    
+                    srcs = []
+                    for expr in lst:
+                        srcs.append(self.get_expr(expr['expr']))
+                    
+                    args = args %(",".join(srcs))
+                
+                out.append("new {type}{template}{array}{args}".format(
+                    type=self.get_vdotted(op.data['name']),
+                    template=templ,
+                    array=arr,
+                    args=args
                 ))
                 
             else:

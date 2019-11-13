@@ -68,13 +68,15 @@ class Function(Node):
             tmp = ""
             args = ", ".join([self.get_arg(e) for e in self.args])
             
+            name = self.cname
             if self.template[0] != None:
                 
                 tmp = ", ".join(["typename %s" %e['name'] for e in self.template])
                 tmp = "%stemplate<%s>\n" %(tab, tmp)
+                name = " " + name
                 
-            return "\n%s%s%s %s(%s) {\n%s%s}\n" %(
-                tmp, tab, self.type[0], self.cname, args,
+            return "\n%s%s%s%s(%s) {\n%s%s}\n" %(
+                tmp, tab, self.type[0], name, args,
                 self.childs_source(tab + "\t"), tab
             )
         

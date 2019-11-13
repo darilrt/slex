@@ -186,6 +186,12 @@ class Sxc:
             node.line = data['line']
             return node
         
+        @self.irs.add("del_stmt")
+        def func(irs, data, ident):
+            node = IR.Cpp()
+            node.line = "delete " + irs.get_dotted(data['name']) + ";"
+            return node
+        
         @self.irs.add("return_stmt")
         def func(irs, data, ident):
             node = IR.Return()

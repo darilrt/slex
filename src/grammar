@@ -77,4 +77,4 @@ expr_op: 'op'=[ '+' '-' '++' '--' '.' '*' '**' '/' '%' '&' '|' '<' '<<' \
 expr_new: 'new' 'name'=vdottname \
     'template'=[('<' 'type'=vtype 'list'=*(',' 'type'=vtype) '>')]\
     'array'=*('[' 'expr'=[EXPR] ']') \
-    'args'=*('[' 'args'=[exprlist] ']')
+    'args'=('(' 'args'=[exprlist] ')')
