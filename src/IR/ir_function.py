@@ -88,7 +88,7 @@ class Function(Node):
             if self.name['__name__'] == "expr_op":
                 name = self.name['op']
             
-            return "%soperator %s(%s) {\n%s%s}\n" %(
+            return "%s operator %s(%s) {\n%s%s}\n" %(
                 self.type[0], name, args,
                 self.childs_source(tab + "\t"), tab
             )

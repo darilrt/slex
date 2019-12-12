@@ -3,20 +3,23 @@ use slex.*
 class Int:
     i32 value
     
+    def Int():
+    
     def Int(i32 number):
         self.value = number
 
     @operator
-    def +(i32 value): Int*
-        return new Int(self.value + value)
+    def +(Int b): i32
+        return self.value + b.value
+        
 
 def main(): i32
-    Int* a = new Int(10)
-    Int* b = new Int(20)
+    Int a, b, c
+    a.value = 10
+    b.value = 20
     
-    Int* c = a + b
+    c.value = a + b
     
-    del a
-    del b
-    del c
+    print(c.value)
+    
     return 0
