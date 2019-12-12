@@ -10,9 +10,13 @@ class_define: 'class' 'name'=IDENT\
     )] ':' EOL
 
 # functions
-func_define: 'def' 'name'=[IDENT expr_op]\
+func_define: 'def' 'name'=[IDENT overload_ops]\
     'template'=[('<' 'name'=IDENT 'list'=*(',' 'name'=IDENT) '>')]\
     '(' 'args'=[typedlist] ')' ':' 'type'=[vtype] EOL
+
+overload_ops: 'op'=['+' '-' '*' '/' '%' '^' '|' '&' '~' '<<' '>>' '=' '=='  \
+                    '!=' '>' '<' '>=' '<=' '!' '&&' '||' '+=' '-=' '*=' '/='\
+                    '&=' '|=' '%=' '^=' '<<=' '>>=' '++' '--' '[]' '->' ',' \]
 
 func_call: 'name'=dotted_name\
     'template'=[('<' 'type'=vtype 'list'=*(',' 'type'=vtype) '>')]\
