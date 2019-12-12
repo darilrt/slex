@@ -13,6 +13,7 @@ class Function(Node):
         
         self.static = False
         self.virtual = False    
+        self.operator = False    
 	
     def push(self, node):
         if node.__class__ == IR.Variable:
@@ -28,14 +29,14 @@ class Function(Node):
         return s
     
     def source(self, tab=""):
-        if self.cname == "":
+        if self.cname == "" and not self.operator:
             self.cname = "f_" + self.name
             
             if self.name == "main":
                 if self.parent == None:
                     self.cname = 'main'
         
-        if self.virtual:
+        if self.virtual or self.operator:
             return ""
         
         px = ""
@@ -62,7 +63,7 @@ class Function(Node):
             if self.parent == None:
                 return ""
                 
-        if self.cname == "": self.cname = "f_" + self.name
+        if self.cname == "" and not self.operator: self.cname = "f_" + self.name
         
         if len(self.template) > 0:
             tmp = ""
@@ -74,9 +75,21 @@ class Function(Node):
                 tmp = ", ".join(["typename %s" %e['name'] for e in self.template])
                 tmp = "%stemplate<%s>\n" %(tab, tmp)
                 name = " " + name
-                
+            
             return "\n%s%s%s%s(%s) {\n%s%s}\n" %(
                 tmp, tab, self.type[0], name, args,
+                self.childs_source(tab + "\t"), tab
+            )
+        
+        if self.operator:
+            args = ", ".join([self.get_arg(e) for e in self.args])
+            name, type = "", ""
+            
+            if self.name['__name__'] == "expr_op":
+                name = self.name['op']
+            
+            return "%soperator %s(%s) {\n%s%s}\n" %(
+                self.type[0], name, args,
                 self.childs_source(tab + "\t"), tab
             )
         

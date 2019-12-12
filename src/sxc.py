@@ -252,6 +252,9 @@ class Sxc:
             elif data['cmd'] == 'header':
                 self.next_as = 'header'
             
+            elif data['cmd'] == 'operator':
+                self.next_as = 'operator'
+            
             return IR.Null()
         
         @self.irs.add("while_stmt")
@@ -346,6 +349,9 @@ class Sxc:
             
             elif self.next_as == 'virtual':
                 node.virtual = True
+            
+            elif self.next_as == 'operator':
+                node.operator = True
             
             self.next_as = ''
             

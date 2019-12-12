@@ -1,15 +1,22 @@
 use slex.*
 
-class Node<T>:
-    T data
+class Int:
+    i32 value
     
-    def Node(T a, T b):
-        self.data = a + b
+    def Int(i32 number):
+        self.value = number
+
+    @operator
+    def +(i32 value): Int*
+        return new Int(self.value + value)
 
 def main(): i32
-    Node<i32>* node = new Node<i32>(1, 2)
+    Int* a = new Int(10)
+    Int* b = new Int(20)
     
-    print(node.data)
+    Int* c = a + b
     
-    del node
+    del a
+    del b
+    del c
     return 0
